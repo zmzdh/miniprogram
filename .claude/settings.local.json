@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"D:\\\\Cadence\\\\SPB_Data\\\\WeChatProjects\" -Recurse -Filter \"*.pdf\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object FullName, Length)",
+      "PowerShell(pip install *)",
+      "Bash(Get-ChildItem *)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; Write-Output \"System.Drawing available\")"
+    ]
+  }
+}

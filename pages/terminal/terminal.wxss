@@ -1,0 +1,137 @@
+.page {
+  padding: 24rpx;
+}
+
+/* 模式标签 */
+.nav-tabs {
+  display: flex;
+  background: #f0f0f0;
+  border-radius: 12rpx;
+  padding: 4rpx;
+  margin-bottom: 20rpx;
+}
+
+.nav-tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: #666;
+  border-radius: 10rpx;
+  transition: all 0.2s;
+}
+
+.nav-tab-active {
+  background: #007AFF;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 周期发送 */
+.cycle-box {
+  margin-top: 20rpx;
+  padding: 18rpx;
+  background: #fafafa;
+  border-radius: 12rpx;
+}
+
+/* 发送包显示 */
+.packet-box {
+  margin-top: 16rpx;
+  padding: 16rpx;
+  background: #fafafa;
+  border-radius: 10rpx;
+}
+
+.packet-title {
+  font-weight: 600;
+  margin-bottom: 8rpx;
+  font-size: 24rpx;
+}
+
+/* 命令模板 */
+.group-box {
+  margin-top: 16rpx;
+  padding: 14rpx;
+  background: #fafafa;
+  border-radius: 12rpx;
+}
+
+.group-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+  color: #444;
+}
+
+.cmd-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid #ececec;
+  gap: 12rpx;
+}
+
+.cmd-item:last-child { border-bottom: none; }
+
+.cmd-main { flex: 1; }
+
+.cmd-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #222;
+}
+
+.cmd-meta {
+  font-size: 22rpx;
+  color: #888;
+  margin-top: 4rpx;
+}
+
+/* 键值对 */
+.kv {
+  font-size: 24rpx;
+  color: #333;
+  line-height: 1.8;
+  word-break: break-all;
+}
+
+.full-frame {
+  font-weight: 600;
+  color: #007AFF;
+  margin-top: 6rpx;
+}
+
+/* 历史项 */
+.history-item {
+  padding: 14rpx 0;
+  border-bottom: 1rpx dashed #eee;
+}
+
+.history-item:last-child { border-bottom: none; }
+
+.history-time {
+  font-size: 22rpx;
+  color: #888;
+  margin-bottom: 4rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.history-line {
+  font-size: 24rpx;
+}
+
+.history-meta {
+  font-size: 22rpx;
+  color: #666;
+  margin-top: 2rpx;
+}
+
+/* 帧数统计 */
+.frm-cnt {
+  font-size: 22rpx;
+  color: #666;
+}

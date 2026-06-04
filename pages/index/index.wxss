@@ -1,0 +1,144 @@
+.page {
+  padding: 24rpx;
+}
+
+/* 状态卡片 */
+.status-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: #f8f9fa;
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.status-connected {
+  background: #f0f9f0;
+}
+
+.status-main {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: 1;
+}
+
+.status-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: #4caf50;
+  flex-shrink: 0;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #222;
+}
+
+.status-id {
+  font-size: 22rpx;
+  color: #888;
+  word-break: break-all;
+  margin-top: 4rpx;
+}
+
+.status-rssi {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 4rpx;
+}
+
+.status-text {
+  font-size: 28rpx;
+  color: #666;
+  flex: 1;
+}
+
+/* 模式描述 */
+.mode-desc {
+  margin-top: 12rpx;
+  padding: 16rpx;
+  background: #f5f5f5;
+  border-radius: 10rpx;
+  font-size: 24rpx;
+  color: #888;
+  line-height: 1.6;
+}
+
+/* 设备列表 */
+.device-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.device-item:last-child { border-bottom: none; }
+
+.device-main {
+  flex: 1;
+  padding-right: 20rpx;
+}
+
+.device-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #222;
+}
+
+.device-id {
+  font-size: 22rpx;
+  color: #888;
+  word-break: break-all;
+  margin-top: 4rpx;
+}
+
+.device-rssi {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 4rpx;
+}
+
+/* RSSI 进度条 */
+.rssi-bar {
+  width: 120rpx;
+  height: 8rpx;
+  background: #e0e0e0;
+  border-radius: 4rpx;
+  margin-top: 6rpx;
+  overflow: hidden;
+}
+
+.rssi-fill {
+  height: 100%;
+  background: #4caf50;
+  border-radius: 4rpx;
+  transition: width 0.3s;
+}
+
+/* 信息行 */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-label {
+  color: #888;
+}
+
+.info-value {
+  color: #333;
+  font-weight: 500;
+}

@@ -1,0 +1,80 @@
+<view class="page">
+  <view class="nav-tabs">
+    <view class="nav-tab {{activeTab === 0 ? 'nav-tab-active' : ''}}" data-tab="0" bindtap="switchTab">
+      帧历史 ({{frameHistory.length}})
+    </view>
+    <view class="nav-tab {{activeTab === 1 ? 'nav-tab-active' : ''}}" data-tab="1" bindtap="switchTab">
+      系统日志 ({{logs.length}})
+    </view>
+  </view>
+
+  <!-- 帧历史 -->
+  <view wx:if="{{activeTab === 0}}">
+    <view class="card">
+      <view class="section-title">筛选</view>
+      <view class="filter-row">
+        <text class="filter-label">方向:</text>
+        <view class="filter-tags">
+          <view class="filter-tag {{filterDirection === 'all' ? 'active' : ''}}" data-dir="all" bindtap="handleFilterDir">全部</view>
+          <view class="filter-tag {{filterDirection === 'send' ? 'active' : ''}}" data-dir="send" bindtap="handleFilterDir">TX</view>
+          <view class="filter-tag {{filterDirection === 'receive' ? 'active' : ''}}" data-dir="receive" bindtap="handleFilterDir">RX</view>
+        </view>
+      </view>
+      <view class="filter-row">
+        <text class="filter-label">Frame ID:</text>
+        <input class="filter-input" value="{{filterFrameId}}" bindinput="onFilterIdInput" placeholder="12" maxlength="2" />
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="btn-row">
+        <button size="mini" bindtap="handleExportCSV">导出 CSV</button>
+        <button size="mini" bindtap="handleExportJSON">导出 JSON</button>
+        <button size="mini" type="warn" bindtap="handleClearFrames">清空帧</button>
+      </view>
+    </view>
+
+    <view wx:if="{{getFilteredFrames().length === 0}}" class="card">
+      <view class="empty-tip">暂无帧记录</view>
+    </view>
+
+    <block wx:for="{{getFilteredFrames()}}" wx:key="index">
+      <view class="card frame-card" data-index="{{index}}" bindtap="viewFrameDetail">
+        <view class="flex-between">
+          <view class="flex-start">
+            <text class="tag {{item.direction === 'send' ? 'tag-info' : 'tag-success'}}">
+              {{item.direction === 'send' ? 'TX' : 'RX'}}
+            </text>
+            <text class="frame-time">{{item.time}}</text>
+          </view>
+          <text class="frame-id">ID: {{item.linIdHex || item.frameIdHex || '?'}}</text>
+        </view>
+        <view class="hex-text frame-data">{{item.dataHex || item.rawHex || ''}}</view>
+        <view wx:if="{{item.crcValid !== undefined}}" class="frame-crc">
+          CRC: <text class="{{item.crcValid ? 'crc-ok' : 'crc-fail'}}">{{item.crcValid ? '✓' : '✗'}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 系统日志 -->
+  <view wx:if="{{activeTab === 1}}">
+    <view class="card">
+      <view class="btn-row">
+        <button size="mini" type="warn" bindtap="handleClearLogs">清空日志</button>
+      </view>
+    </view>
+
+    <view class="card">
+      <scroll-view scroll-y class="scroll-y">
+        <block wx:for="{{logs}}" wx:key="index">
+          <view class="log-item">
+            <text class="log-time">[{{item.time}}]</text>
+            <text class="log-msg">{{item.msg}}</text>
+          </view>
+        </block>
+        <view wx:if="{{logs.length === 0}}" class="empty-tip">暂无日志</view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,175 @@
+<view class="page">
+  <!-- 连接状态 -->
+  <view wx:if="{{!isConnected}}" class="card">
+    <view class="empty-tip">请先在「设备」页连接蓝牙设备</view>
+  </view>
+
+  <!-- 模式标签 -->
+  <view class="nav-tabs">
+    <view wx:for="{{modeTabs}}" wx:key="label"
+      class="nav-tab {{modeTabIndex === index ? 'nav-tab-active' : ''}}"
+      data-index="{{index}}"
+      bindtap="handleModeTab">{{item.label}}</view>
+  </view>
+
+  <!-- 波特率 + 模式设置 -->
+  <view class="card">
+    <view class="section-title">通信设置</view>
+    <view class="form-row">
+      <text class="form-label">波特率</text>
+      <picker mode="selector" range="{{baudRateOptions}}" range-key="label" value="{{baudRateIndex}}" bindchange="handleBaudRateChange">
+        <view class="form-picker">{{baudRateOptions[baudRateIndex].label}}</view>
+      </picker>
+    </view>
+    <button type="primary" size="mini" bindtap="handleSetMode" disabled="{{!isConnected}}">应用模式设置</button>
+  </view>
+
+  <!-- 从机通道控制 (仅从机模式) -->
+  <view wx:if="{{modeTabIndex === 2}}" class="card">
+    <view class="section-title">从机通道 (0-15)</view>
+    <view class="form-row">
+      <text class="form-label">通道号</text>
+      <input class="form-input" type="number" value="{{slaveChannel}}" bindinput="onSlaveChannelInput" placeholder="0-15" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">方向</text>
+      <picker mode="selector" range="{{slaveDirOptions}}" range-key="label" value="{{slaveDirIndex}}" bindchange="handleSlaveDirChange">
+        <view class="form-picker">{{slaveDirOptions[slaveDirIndex].label}}</view>
+      </picker>
+    </view>
+    <view class="btn-row">
+      <button type="primary" size="mini" bindtap="handleSlaveEnable" disabled="{{!isConnected}}">使能通道</button>
+      <button type="warn" size="mini" bindtap="handleSlaveDisable" disabled="{{!isConnected}}">禁止通道</button>
+    </view>
+  </view>
+
+  <!-- LIN 命令参数 (仅主模式/从机模式) -->
+  <view wx:if="{{modeTabIndex === 1 || modeTabIndex === 2}}" class="card">
+    <view class="section-title">LIN 命令参数</view>
+
+    <view class="form-row">
+      <text class="form-label">方向</text>
+      <picker mode="selector" range="{{directionOptions}}" range-key="label" value="{{directionIndex}}" bindchange="handleDirChange">
+        <view class="form-picker">{{directionOptions[directionIndex].label}}</view>
+      </picker>
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">Frame ID (HEX)</text>
+      <input class="form-input" value="{{frameIdHex}}" bindinput="onFrameIdInput" placeholder="例如 12" maxlength="2" />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">数据长度 (1-8)</text>
+      <input class="form-input" type="number" value="{{dataLength}}" bindinput="onDataLenInput" placeholder="1-8" />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">数据 HEX</text>
+      <input class="form-input" value="{{dataHex}}" bindinput="onDataHexInput" placeholder="例如 11 22 33 44" />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">校验类型</text>
+      <picker mode="selector" range="{{checkTypeOptions}}" range-key="label" value="{{checkTypeIndex}}" bindchange="handleCheckTypeChange">
+        <view class="form-picker">{{checkTypeOptions[checkTypeIndex].label}}</view>
+      </picker>
+    </view>
+
+    <!-- 发送按钮 -->
+    <view class="btn-row">
+      <button type="primary" bindtap="handleSend" disabled="{{!isConnected}}">
+        {{directionOptions[directionIndex].value === 'send' ? '发送' : '读取'}}
+      </button>
+    </view>
+
+    <!-- 周期发送 (仅主模式) -->
+    <view wx:if="{{modeTabIndex === 1}}" class="cycle-box">
+      <view class="form-row">
+        <text class="form-label">周期发送</text>
+        <picker mode="selector" range="{{periodOptions}}" range-key="label" value="{{periodIndex}}" bindchange="handlePeriodChange">
+          <view class="form-picker">{{periodOptions[periodIndex].label}}</view>
+        </picker>
+      </view>
+      <button type="{{isPeriodic ? 'warn' : 'default'}}" bindtap="togglePeriodic" disabled="{{!isConnected}}">
+        {{isPeriodic ? '停止周期发送' : '启动周期发送'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 被动模式提示 (监听/嗅探) -->
+  <view wx:if="{{modeTabIndex === 0 || modeTabIndex === 3}}" class="card">
+    <view class="section-title">工作状态</view>
+    <view class="form-row">
+      <text class="form-label">校验类型</text>
+      <picker mode="selector" range="{{checkTypeOptions}}" range-key="label" value="{{checkTypeIndex}}" bindchange="handleCheckTypeChange">
+        <view class="form-picker">{{checkTypeOptions[checkTypeIndex].label}}</view>
+      </picker>
+    </view>
+    <view class="empty-tip">{{modeTabIndex === 0 ? '监听模式 — 设备仅接收 LIN 总线数据，不参与通信' : '嗅探模式 — 设备捕获总线所有帧，不参与通信'}}</view>
+  </view>
+
+  <!-- 命令模板 -->
+  <view class="card">
+    <view class="section-title">命令模板</view>
+    <view wx:if="{{profiles.length > 0}}" class="form-row">
+      <picker mode="selector" range="{{profiles}}" range-key="name" value="{{profileIndex}}" bindchange="handleProfileChange">
+        <view class="form-picker">{{profiles[profileIndex].name}}</view>
+      </picker>
+    </view>
+    <view wx:else class="empty-tip">暂无设备配置，请在「配置」页添加</view>
+
+    <block wx:for="{{commandGroups}}" wx:key="id">
+      <view class="group-box">
+        <view class="group-title">{{item.name}}</view>
+        <block wx:for="{{item.commands}}" wx:key="id">
+          <view class="cmd-item">
+            <view class="cmd-main" data-commandid="{{item.id}}" bindtap="handleCommandTap">
+              <view class="cmd-name">{{item.name}}</view>
+              <view class="cmd-meta">{{item.direction}} | ID={{item.frameIdHex}} | LEN={{item.dataLength}} | {{item.dataHex || '(空)'}}</view>
+            </view>
+            <button wx:if="{{modeTabIndex === 1 || modeTabIndex === 2}}" size="mini" type="primary" data-commandid="{{item.id}}" bindtap="handleQuickSend">发送</button>
+          </view>
+        </block>
+      </view>
+    </block>
+  </view>
+
+
+  <!-- 最近接收帧 -->
+  <view class="card">
+    <view class="section-title">最近接收</view>
+    <view wx:if="{{lastFrame && lastFrame.valid}}">
+      <view class="kv">方向: {{lastFrame.dirName}}</view>
+      <view class="kv">Frame ID: 0x{{lastFrame.linIdHex}}</view>
+      <view class="kv">数据长度: {{lastFrame.dataLen}}</view>
+      <view class="kv">数据: {{lastFrame.dataHex || '(空)'}}</view>
+      <view class="kv">校验类型: {{lastFrame.checkTypeName}}</view>
+    </view>
+    <view wx:elif="{{lastFrame && !lastFrame.valid}}" class="empty-tip">{{lastFrame.reason}}</view>
+    <view wx:else class="empty-tip">暂无接收帧</view>
+  </view>
+
+  <!-- 帧历史 + 统计 -->
+  <view class="card">
+    <view class="flex-between">
+      <view class="section-title">帧历史</view>
+      <view class="frm-cnt">发送: {{sendCount}} | 接收: {{recvCount}}</view>
+    </view>
+    <view class="btn-row">
+      <button size="mini" bindtap="clearFrames">清空</button>
+    </view>
+    <scroll-view scroll-y class="scroll-y">
+      <block wx:for="{{frameHistory}}" wx:key="index">
+        <view class="history-item">
+          <view class="history-time">
+            <text class="tag {{item.direction === 'send' ? 'tag-info' : 'tag-success'}}">{{item.direction === 'send' ? 'TX' : 'RX'}}</text>
+            {{item.time}}
+          </view>
+          <view wx:if="{{item.linIdHex}}" class="history-meta">ID: 0x{{item.linIdHex}} | 长度: {{item.dataLen}} | 数据: {{item.dataHex || '-'}}</view>
+          <view wx:elif="{{item.dataHex}}" class="history-meta">数据: {{item.dataHex}}</view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+</view>

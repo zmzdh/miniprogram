@@ -1,0 +1,55 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/terminal/terminal",
+    "pages/profiles/profiles",
+    "pages/logs/logs",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "navigationBarTitleText": "LIN设备通讯助手",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f6f7fb"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#007AFF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "设备",
+        "iconPath": "images/tab-device.png",
+        "selectedIconPath": "images/tab-device-active.png"
+      },
+      {
+        "pagePath": "pages/terminal/terminal",
+        "text": "终端",
+        "iconPath": "images/tab-terminal.png",
+        "selectedIconPath": "images/tab-terminal-active.png"
+      },
+      {
+        "pagePath": "pages/profiles/profiles",
+        "text": "配置",
+        "iconPath": "images/tab-profile.png",
+        "selectedIconPath": "images/tab-profile-active.png"
+      },
+      {
+        "pagePath": "pages/logs/logs",
+        "text": "日志",
+        "iconPath": "images/tab-log.png",
+        "selectedIconPath": "images/tab-log-active.png"
+      },
+      {
+        "pagePath": "pages/settings/settings",
+        "text": "设置",
+        "iconPath": "images/tab-settings.png",
+        "selectedIconPath": "images/tab-settings-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

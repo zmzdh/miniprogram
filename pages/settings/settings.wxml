@@ -1,0 +1,119 @@
+<view class="page">
+  <!-- BLE 设置 -->
+  <view class="card">
+    <view class="card-title">BLE 蓝牙设置</view>
+
+    <view class="form-row">
+      <text class="form-label">蓝牙模块</text>
+      <picker mode="selector" range="{{blePresets}}" range-key="label" value="{{blePresetIndex}}" bindchange="handleBlePresetChange">
+        <view class="form-picker">{{blePresets[blePresetIndex].label}}</view>
+      </picker>
+    </view>
+
+    <view wx:if="{{showCustomUUID}}" class="custom-uuid-box">
+      <view class="section-title">自定义 UUID</view>
+      <view class="form-row">
+        <text class="form-label">Service UUID</text>
+        <input class="form-input" value="{{customServiceId}}" bindinput="onCustomServiceId" placeholder="0000ffe0-..." />
+      </view>
+      <view class="form-row">
+        <text class="form-label">Write UUID</text>
+        <input class="form-input" value="{{customWriteId}}" bindinput="onCustomWriteId" placeholder="0000ffe1-..." />
+      </view>
+      <view class="form-row">
+        <text class="form-label">Notify UUID</text>
+        <input class="form-input" value="{{customNotifyId}}" bindinput="onCustomNotifyId" placeholder="0000ffe1-..." />
+      </view>
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">扫描超时 (秒)</text>
+      <input class="form-input" type="number" value="{{scanTimeout}}" bindinput="onScanTimeout" />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">连接超时 (秒)</text>
+      <input class="form-input" type="number" value="{{connectTimeout}}" bindinput="onConnectTimeout" />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">自动重连</text>
+      <switch checked="{{autoReconnect}}" bindchange="onAutoReconnect" />
+    </view>
+
+    <view wx:if="{{autoReconnect}}" class="form-row">
+      <text class="form-label">最大重连次数</text>
+      <input class="form-input" type="number" value="{{maxReconnectAttempts}}" bindinput="onMaxReconnect" />
+    </view>
+  </view>
+
+  <!-- LIN 协议默认值 -->
+  <view class="card">
+    <view class="card-title">LIN 协议默认值</view>
+
+    <view class="form-row">
+      <text class="form-label">默认波特率</text>
+      <picker mode="selector" range="{{baudRateOptions}}" range-key="label" value="{{baudRateIndex}}" bindchange="onBaudRate">
+        <view class="form-picker">{{baudRateOptions[baudRateIndex].label}}</view>
+      </picker>
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">默认校验类型</text>
+      <picker mode="selector" range="{{checkTypeOptions}}" range-key="label" value="{{checkTypeIndex}}" bindchange="onCheckType">
+        <view class="form-picker">{{checkTypeOptions[checkTypeIndex].label}}</view>
+      </picker>
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">默认工作模式</text>
+      <picker mode="selector" range="{{modeOptions}}" range-key="label" value="{{modeIndex}}" bindchange="onMode">
+        <view class="form-picker">{{modeOptions[modeIndex].label}}</view>
+      </picker>
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">默认周期间隔</text>
+      <picker mode="selector" range="{{periodOptions}}" range-key="label" value="{{periodIndex}}" bindchange="onPeriod">
+        <view class="form-picker">{{periodOptions[periodIndex].label}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 数据管理 -->
+  <view class="card">
+    <view class="card-title">数据管理</view>
+    <view class="info-row">
+      <text class="info-label">设备配置数</text>
+      <text class="info-value">{{profileCount}} 个</text>
+    </view>
+    <view class="btn-row" style="margin-top:16rpx">
+      <button size="mini" bindtap="handleSave" type="primary">保存设置</button>
+      <button size="mini" bindtap="handleReset">恢复默认</button>
+    </view>
+    <view class="btn-row" style="margin-top:12rpx">
+      <button size="mini" type="warn" bindtap="handleClearAll">清除所有数据</button>
+    </view>
+  </view>
+
+  <!-- 关于 -->
+  <view class="card">
+    <view class="card-title">关于</view>
+    <view class="info-row">
+      <text class="info-label">应用版本</text>
+      <text class="info-value">{{appVersion}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">基础库版本</text>
+      <text class="info-value">{{sdkVersion}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">协议版本</text>
+      <text class="info-value">LINTest-M V1.0.0</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">支持功能</text>
+      <text class="info-value">主/从/监听/嗅探模式</text>
+    </view>
+  </view>
+</view>

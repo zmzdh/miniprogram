@@ -1,0 +1,140 @@
+<view class="page">
+  <!-- 顶部操作 -->
+  <view class="card">
+    <view class="card-title">设备配置管理</view>
+    <view class="btn-row">
+      <button type="primary" size="mini" bindtap="showAddProfile">+ 添加设备</button>
+      <button size="mini" bindtap="handleExport">导出</button>
+      <button size="mini" bindtap="handleImport">导入</button>
+    </view>
+  </view>
+
+  <!-- 设备列表 -->
+  <view wx:if="{{profiles.length === 0}}" class="card">
+    <view class="empty-tip">暂无设备配置，点击「添加设备」创建</view>
+  </view>
+
+  <block wx:for="{{profiles}}" wx:key="id">
+    <view class="card profile-card {{selectedProfileId === item.id ? 'profile-active' : ''}}"
+      data-id="{{item.id}}" bindtap="selectProfile">
+      <view class="flex-between">
+        <view>
+          <view class="profile-name">{{item.name}}</view>
+          <view class="profile-desc">{{item.description || '无描述'}}</view>
+          <view class="profile-meta">{{item.groups.length}} 个分组</view>
+        </view>
+        <view class="btn-col">
+          <button size="mini" data-id="{{item.id}}" catchtap="showEditProfile">编辑</button>
+          <button size="mini" type="warn" data-id="{{item.id}}" catchtap="deleteProfile">删除</button>
+        </view>
+      </view>
+
+      <!-- 展开详情 -->
+      <view wx:if="{{selectedProfileId === item.id}}" class="profile-detail">
+        <view class="divider"></view>
+        <view class="section-title">分组与命令</view>
+
+        <block wx:for="{{item.groups}}" wx:for-item="group" wx:key="id">
+          <view class="group-box">
+            <view class="flex-between">
+              <view class="group-title">{{group.name}}</view>
+              <view class="btn-row">
+                <button size="mini" data-groupid="{{group.id}}" catchtap="showAddCmd">+命令</button>
+                <button size="mini" type="warn" data-groupid="{{group.id}}" catchtap="deleteGroup">删</button>
+              </view>
+            </view>
+
+            <block wx:for="{{group.commands}}" wx:for-item="cmd" wx:key="id">
+              <view class="cmd-item">
+                <view class="cmd-info">
+                  <view class="cmd-name">{{cmd.name}}</view>
+                  <view class="cmd-meta">
+                    <text class="tag {{cmd.direction === 'send' ? 'tag-info' : 'tag-success'}}">{{cmd.direction}}</text>
+                    ID={{cmd.frameIdHex}} | LEN={{cmd.dataLength}} | {{cmd.dataHex || '(空)'}}
+                  </view>
+                </view>
+                <view class="btn-row">
+                  <button size="mini" data-cmdid="{{cmd.id}}" data-groupid="{{group.id}}" catchtap="editCmd">编辑</button>
+                  <button size="mini" type="warn" data-cmdid="{{cmd.id}}" data-groupid="{{group.id}}" catchtap="deleteCmd">删</button>
+                </view>
+              </view>
+            </block>
+          </view>
+        </block>
+
+        <button size="mini" bindtap="showAddGroup" style="margin-top:12rpx">+ 添加分组</button>
+      </view>
+    </view>
+  </block>
+
+  <!-- Profile 编辑弹窗 -->
+  <view wx:if="{{showEditor}}" class="modal-mask" bindtap="closeEditor">
+    <view class="modal-card" catchtap="noop">
+      <view class="card-title">{{editMode === 'add' ? '添加设备' : '编辑设备'}}</view>
+      <view class="form-row">
+        <text class="form-label">名称</text>
+        <input class="form-input" value="{{formName}}" bindinput="onFormName" placeholder="设备名称" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">描述</text>
+        <input class="form-input" value="{{formDesc}}" bindinput="onFormDesc" placeholder="设备描述" />
+      </view>
+      <view class="btn-row">
+        <button type="primary" bindtap="saveProfile">保存</button>
+        <button bindtap="closeEditor">取消</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分组编辑弹窗 -->
+  <view wx:if="{{showGroupEditor}}" class="modal-mask" bindtap="closeGroupEditor">
+    <view class="modal-card" catchtap="noop">
+      <view class="card-title">添加分组</view>
+      <view class="form-row">
+        <text class="form-label">分组名</text>
+        <input class="form-input" value="{{groupFormName}}" bindinput="onGroupFormName" placeholder="例如: 状态类" />
+      </view>
+      <view class="btn-row">
+        <button type="primary" bindtap="saveGroup">保存</button>
+        <button bindtap="closeGroupEditor">取消</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 命令编辑弹窗 -->
+  <view wx:if="{{showCmdEditor}}" class="modal-mask" bindtap="closeCmdEditor">
+    <view class="modal-card" catchtap="noop">
+      <view class="card-title">{{editCmdId ? '编辑命令' : '添加命令'}}</view>
+      <view class="form-row">
+        <text class="form-label">名称</text>
+        <input class="form-input" value="{{cmdFormName}}" bindinput="onCmdFormName" placeholder="命令名称" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">描述</text>
+        <input class="form-input" value="{{cmdFormDesc}}" bindinput="onCmdFormDesc" placeholder="命令描述" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">方向</text>
+        <picker mode="selector" range="{{['send','read']}}" value="{{cmdFormDirection === 'send' ? 0 : 1}}" bindchange="handleCmdDirChange">
+          <view class="form-picker">{{cmdFormDirection === 'send' ? '发送' : '读取'}}</view>
+        </picker>
+      </view>
+      <view class="form-row">
+        <text class="form-label">Frame ID (HEX)</text>
+        <input class="form-input" value="{{cmdFormFrameIdHex}}" bindinput="onCmdFormId" placeholder="12" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">数据长度</text>
+        <input class="form-input" type="number" value="{{cmdFormDataLength}}" bindinput="onCmdFormLen" placeholder="4" />
+      </view>
+      <view class="form-row">
+        <text class="form-label">数据HEX</text>
+        <input class="form-input" value="{{cmdFormDataHex}}" bindinput="onCmdFormData" placeholder="11 22 33 44" />
+      </view>
+      <view class="btn-row">
+        <button type="primary" bindtap="saveCmd">保存</button>
+        <button bindtap="closeCmdEditor">取消</button>
+      </view>
+    </view>
+  </view>
+</view>
