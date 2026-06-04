@@ -6,6 +6,7 @@
       <button type="primary" size="mini" bindtap="showAddProfile">+ 添加设备</button>
       <button size="mini" bindtap="handleExport">导出</button>
       <button size="mini" bindtap="handleImport">导入</button>
+      <button size="mini" bindtap="handleImportLDF">导入 LDF</button>
     </view>
   </view>
 

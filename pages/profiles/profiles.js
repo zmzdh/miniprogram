@@ -3,6 +3,7 @@
  */
 
 const storage = require('../../services/storage')
+const { parseLDF } = require('../../utils/ldf-parser')
 
 Page({
   data: {
@@ -335,6 +336,83 @@ Page({
           fail: () => wx.showToast({ title: '读取剪贴板失败', icon: 'none' })
         })
       }
+    })
+  },
+
+  // ─── LDF 导入 ───────────────────────────────────
+
+  handleImportLDF() {
+    const self = this
+    wx.showActionSheet({
+      itemList: ['从剪贴板粘贴', '选择聊天文件'],
+      success(res) {
+        if (res.tapIndex === 0) {
+          self._importLDFFromClipboard()
+        } else if (res.tapIndex === 1) {
+          self._importLDFFromFile()
+        }
+      }
+    })
+  },
+
+  _importLDFFromClipboard() {
+    const self = this
+    wx.getClipboardData({
+      success(res) {
+        if (!res.data || res.data.trim().length === 0) {
+          wx.showToast({ title: '剪贴板为空', icon: 'none' })
+          return
+        }
+        try {
+          const result = parseLDF(res.data)
+          self._saveLDFResult(result)
+        } catch (e) {
+          wx.showToast({ title: '解析失败: ' + (e.message || '格式错误'), icon: 'none' })
+        }
+      },
+      fail() {
+        wx.showToast({ title: '读取剪贴板失败', icon: 'none' })
+      }
+    })
+  },
+
+  _importLDFFromFile() {
+    const self = this
+    wx.chooseMessageFile({
+      count: 1,
+      type: 'file',
+      extension: ['ldf', 'LDF', 'txt'],
+      success(res) {
+        const filePath = res.tempFiles[0].path
+        const fs = wx.getFileSystemManager()
+        try {
+          // LDF 文件通常是 ASCII/UTF-8 编码
+          const text = fs.readFileSync(filePath, 'utf-8')
+          const result = parseLDF(text)
+          self._saveLDFResult(result)
+        } catch (e) {
+          wx.showToast({ title: '解析失败: ' + (e.message || '格式错误'), icon: 'none' })
+        }
+      },
+      fail(err) {
+        if (err.errMsg && err.errMsg.includes('cancel')) return
+        wx.showToast({ title: '选择文件失败', icon: 'none' })
+      }
+    })
+  },
+
+  _saveLDFResult(result) {
+    storage.addDeviceProfile({
+      name: result.name,
+      description: result.description,
+      groups: result.groups
+    })
+    this.loadProfiles()
+    const cmdCount = result.groups.reduce((sum, g) => sum + g.commands.length, 0)
+    wx.showToast({
+      title: '导入成功: ' + result.groups.length + '组 ' + cmdCount + '条命令',
+      icon: 'success',
+      duration: 2000
     })
   },
 
